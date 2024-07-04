@@ -269,34 +269,30 @@ const DropdownComponent: <T>(
       getValue();
     }, [value, data, getValue]);
 
-    const scrollIndex = useCallback(() => {
-      if (autoScroll && data?.length > 0 && listData?.length === data?.length) {
-        setTimeout(() => {
-          if (refList && refList?.current) {
-            const defaultValue =
-              typeof value === 'object' ? _get(value, valueField) : value;
+  const scrollIndex = useCallback(() => {
+  if (autoScroll && data.length > 0 && listData?.length === data?.length) {
+    setTimeout(() => {
+      if (refList && refList?.current) {
+        const defaultValue = typeof value === 'object' ? _.get(value, valueField) : value;
 
-            const index = _findIndex(listData, (e) =>
-              _isEqual(defaultValue, _get(e, valueField))
-            );
-            if (
-              listData?.length > 0 &&
-              index > -1 &&
-              index <= listData?.length - 1
-            ) {
-              try {
-                refList.current.scrollToIndex({
-                  index: index,
-                  animated: false,
-                });
-              } catch (error) {
-                console.warn(`scrollToIndex error: ${error}`);
-              }
-            }
+        const index = _.findIndex(listData, (e) => _.isEqual(defaultValue, _.get(e, valueField)));
+
+        if (index > -1 && index < listData.length) {
+          try {
+            refList.current.scrollToIndex({
+              index: index,
+              animated: false,
+            });
+          } catch (error) {
+            console.warn(`scrollToIndex error: ${error.message}`);
           }
-        }, 200);
+        } else {
+          console.warn(`scrollToIndex out of range: requested index ${index} is out of 0 to ${listData.length - 1}`);
+        }
       }
-    }, [autoScroll, data.length, listData, value, valueField]);
+    }, 200);
+  }
+}, [autoScroll, data.length, listData, value, valueField, refList]);
 
     const showOrClose = useCallback(() => {
       if (!disable) {
